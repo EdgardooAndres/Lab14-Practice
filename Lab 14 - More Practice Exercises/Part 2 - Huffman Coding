@@ -1,0 +1,56 @@
+Part 2: Huffman Coding
+
+Consider the problem:
+1.	Suppose that we have an alphabet of n symbols and a long message consisting of symbols from this alphabet.  How to encode it so that the code is shorter?
+2.	Suppose we want to store data from these n symbols.  How can we save space?
+
+Example:	Suppose there are 4 characters, A, B, C and D, and the message is BAACABAD
+
+Method 1:	Use ASCII code:
+Each character needs 8 bits.  So a total of 8*8 = 64 bits is required.
+
+Method 2:
+Since there are only 4 different symbols, 2 bits are enough to distinguish them:
+A = 00
+B = 01
+C = 10
+D = 11
+The message can be encoded as 0100001000010011
+A total of 8*2 = 16 bits is needed, and you save 75% of space.
+Can we do better than this?
+
+Method 3:	Huffman code
+This method uses variable length codes so that symbols appearing more frequently will be given shorter codes.
+
+Suppose we use the following code:
+A = 1
+B = 01
+C = 000
+D = 001
+Then BAACABAD can be encoded as 01110001011001.  We now use only 14 bits.
+
+How to construct Huffman code:
+1.	Find 2 symbols that appear least frequently in the message, let's call these symbols C and D.
+2.	Last bit of their code will differentiate between them, say 0 for C and 1 for D.
+3.	Combine these 2 symbols into one single symbol, whose code represents the knowledge that a symbol is either C o D.  Let's call this new symbol CD and whose frequency is the sum of the frequency of C and D.
+4.	Repeat steps 1-3 until there is only 1 symbol left.
+
+
+Note that to read the code for a symbol, you start at that symbol and you make your way to the root.  As you traverse up to the tree, you will be reading the code for that symbol from right to left.
+
+Write a HuffmanCode class that uses LinkedBinaryTree and a priority queue to construct the Huffman code for a message.  You may assume your symbols will be capital letters.
+
+Sample input:
+EACBDDEABGEGDEDADHDEGHDDFEHHABGGADEDCDDGDDGBGGEAGH
+Sample output:
+A = 011
+B = 1101
+C = 11001
+D = 10
+E = 111
+F = 11000
+G = 00
+H = 010
+
+Encoded string:
+1110111100111011010111011110100111001011110011100101011100010101011000111010010011110100000111011110110011010001010001101000011101100010
