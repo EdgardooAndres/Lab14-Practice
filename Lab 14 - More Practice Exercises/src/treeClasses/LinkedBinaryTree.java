@@ -210,44 +210,27 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
 
 		//Base Case
 		if(this.root == null) //tree is empty
-			return null;
+			return copy;
 
-		Queue<Node<E>> q1 = new LinkedList<>();
-		q1.add(this.root);
-		Node<E> n;
-
-		Queue<Node<E>> q2 = new LinkedList<>();
-		Node<E> fresh;
-		Node<E> newRoot = new Node<>(this.root.getElement(), null, this.root.getLeft(), this.root.getRight());
-		q2.add(newRoot);
-
-		while(!q1.isEmpty())
-		{
-			n = q1.remove();
-			fresh = q2.remove();
-			if(null != n.left) 
-			{
-				q1.add(n.left);
-				fresh.left = new Node(n.left.getElement());
-				q2.add(fresh.left);
-			}
-			if(null != n.right) {
-				q1.add(n.right);
-				fresh.right= new Node(n.right.data);
-				q2.add(fresh.right);
-			}           
-		}
-		//make root of three == to the other root.
-		copy.root = this.root;
+		copy.root = createNode(this.root.getElement(), null,null, null);
 		copy.size = this.size;
 
-		//set left and right children
-		if(this.root.getLeft() != null)//if original has left child.
-			copy.root.setLeft(this.root.getLeft());
-		if(this.root.getRight() != null) //if original has right child.
-			copy.root.setRight(this.root.getRight());
+		copyTree(this.root, root);
 
-		return null;
+		return copy;
+	}
+	private void copyTree(Node<E> r1, Node<E> r2){
+		if(r1.getLeft() != null) // if has left
+		{
+			r2.setLeft(new Node<E>(r1.getElement(), r2, null, null));
+			copyTree(r1.getLeft(), r2.getLeft());
+		}
+		if(r1.getRight() != null) // if has left
+		{
+			r2.setRight(new Node<E>(r1.getElement(), r2, null, null));
+			copyTree(r1.getRight(), r2.getRight());
+		}
+
 	}
 
 	/**
@@ -303,9 +286,9 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
 	public int height(){
 		return height(root);
 	}
-	public int height(Node<E> r){ 
+	private int height(Node<E> r){ 
 		if (r == null)
-			return 0;
+			return -1;
 
 		return Math.max(height(r.getLeft()), height(r.getRight())) + 1;
 	}
@@ -322,7 +305,7 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
 
 		Queue<Node<E>> que = new LinkedList<>();
 		que.add(root);
-		
+
 		//flag es para saber si es el ultimo nivel. 
 		//de ser true entonces no debe haber mas ningun nodo en el resto de los elementos del queue.
 		boolean flag = false; 
@@ -340,7 +323,7 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
 			}
 			else //there is a left node.
 				flag = true;
-			
+
 			if(curr.getRight() != null) //if there is right child.
 			{
 				if(flag) //is complete.
@@ -362,26 +345,26 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
 		//base case
 		if(root == null)
 			return true;
-		
+
 		if(!this.isComplete()) // if its not a complete tree it can't be a heap.
 			return false;
-		
+
 		Queue<Node<E>> que = new LinkedList<>();
 		que.add(root);
-		
+
 		while(!que.isEmpty())
 		{
 			Node<E> curr = que.remove();
-			
+
 			if(curr.getLeft() != null) //has left
 			{
-				if(curr.getLeft().getElement() < curr.getElement()) //left element has lower priority.
+				if(((Comparable<E>) curr.getLeft().getElement()).compareTo(curr.getElement()) < 0) //left element has lower priority.
 					return false;
 				que.add(curr.getLeft());
 			}
 			if(curr.getLeft() != null) //has right
 			{
-				if(curr.getRight().getElement() < curr.getElement()) //right element has lower priority.
+				if(((Comparable<E>) curr.getRight().getElement()).compareTo(curr.getElement()) < 0) //right element has lower priority.
 					return false;
 				que.add(curr.getRight());
 			}
@@ -398,28 +381,28 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
 		//base case
 		if(root == null)
 			return false;
-		
+
 		Queue<Node<E>> que = new LinkedList<>();
 		que.add(root);
-		
+
 		while(!que.isEmpty())
 		{
 			Node<E> curr = que.remove();
-			
-			if(curr.getLeft() != null)
+
+			if(curr.getLeft() != null) //has left
 			{
-				if(curr.getLeft().getElement() > curr.getElement())
+				if(((Comparable<E>) curr.getLeft().getElement()).compareTo(curr.getElement()) >= 0) //left element has lower priority.
 					return false;
 				que.add(curr.getLeft());
 			}
-			if(curr.getRight() != null)
+			if(curr.getLeft() != null) //has right
 			{
-				if(curr.getRight().getElement() < curr.getElement())
+				if(((Comparable<E>) curr.getRight().getElement()).compareTo(curr.getElement()) < 0) //right element has lower priority.
 					return false;
 				que.add(curr.getRight());
 			}
 		}
-		
+
 		return true;
 	}
 
@@ -428,34 +411,34 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
 	 * @return
 	 */
 	public boolean isAVL(){
-		
+		//base case
+		if(root == null)
+			return true;
+
 		return isAVL(root);
 	}
 	public boolean isAVL(Node<E> r){
 		//base case
-		if(root == null)
-			return true;
+		boolean AVL = true;
 		
-		Queue<Node<E>> que = new LinkedList<>();
-		que.add(root);
-		
-		while(!que.isEmpty())
+		int hl = Integer.MIN_VALUE;
+		int hr = Integer.MIN_VALUE;
+
+		if(r.getLeft() != null) //has left
 		{
-			Node<E> curr = que.remove();
-			
-			if(curr.getLeft() != null)
-			{
-				isAVL()
-			}
-			if(curr.getRight() != null)
-			{
-				if(curr.getRight().getElement() < curr.getElement())
-					return false;
-				que.add(curr.getRight());
-			}
+			hl = height(r.getLeft());
+			AVL = isAVL(r.getLeft());
+		}
+		if(r.getRight() != null) //has right
+		{
+			hr = height(r.getRight());
+			AVL = isAVL(r.getRight());
 		}
 		
-		return true;
+		if(Math.abs(hl-hr) > 1)
+			AVL = false;
+		
+	return AVL;
 	}
 
 	////////////////////////////////////////////////////////
